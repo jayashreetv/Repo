@@ -1,0 +1,36 @@
+package cassandra_test;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import java.util.UUID;
+
+
+public class Assignment {
+	
+	public static void main(String[] args)
+	{
+	System.out.print("Cassandra");
+	Cluster cluster;
+	Session session;
+	cluster=Cluster.builder().addContactPoint("localhost").build();
+	session = cluster.connect("pes");
+	session.execute("Create table Employee_new(id uuid,emp_code text,emp_name FROZEN<fullname>,doj date,salary float,PRIMARY KEY(id,emp_code))");
+	session.execute("CREATE TABLE EMPLOYEE_INFO_NEW(id uuid, emp_code text, phone set<int>, email set <text>,dependents map<text,int>,PRIMARY KEY(id,emp_code))");
+	session.execute("create table emp_dept(id uuid,dept_id text,emp_id text,proj_details list<text>,proj_sdate date,proj_edate date,PRIMARY KEY(id,dept_id,emp_id))");
+
+	session.execute("Insert into Employee_new(id,emp_code,emp_name,doj,salary)values(1,'e001',{firstname:'Jay',middlename:'ashree',lastname:'T V'},'2018-10-03',2000)");
+			ResultSet results=session.execute("SELECT * FROM Employee_new");
+		for(Row row :results) {
+		System.out.println("ID:" +row.getUUID("id"));
+		System.out.println("emp code: "+row.getString("emp_code"));
+		System.out.println("emp name: "+row.getString("emp_name"));
+		System.out.println("doj: "+row.getString("doj"));
+		System.out.println("salary: "+row.getFloat("salary"));
+	}
+	cluster.close();
+	}
+
+	
+}
+
